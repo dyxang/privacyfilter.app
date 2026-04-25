@@ -1,0 +1,115 @@
+[strong] Privacy Filter
+[a] How it works
+[a] Entities
+[a] Use cases
+[span] English
+[span] English
+[a] 简体中文
+[a] 繁體中文
+[a] 日本語
+[h1] Privacy Filter Online
+[p] Detect names, emails, phone numbers, addresses, account numbers, dates, URLs, and secrets locally in your browser — a free privacy remover that masks them in one click, no upload required.
+[p] Downloading model file
+[small] onnx/model_q4.onnx_data 100%
+[h2] Input text
+[button] Model loading
+[textarea] Please send the contract to Jordan Lee at jordan.lee@northstar.example before May 9, 2026. His direct line is +1 212 555 0198, vendor account AC-44092811, and the deployment token is ghp_8Kb2Qz19mR7xDemoSecret.
+[strong] English
+[span] email, phone, account, secret
+[strong] 日本語
+[span] 住所、電話、口座、URL
+[strong] 简体中文
+[span] 姓名、邮箱、手机号、身份证样式
+[strong] 繁體中文
+[span] 姓名、電話、地址、日期
+[h2] Results
+[button] Copy result
+[h3] Labeled source
+[div] Waiting for detection.
+[h3] Redacted text
+[pre] Waiting for detection.
+[h2] Image input
+[p] Local OCR plus PII labels — all in your browser.
+[label] Upload
+[strong] Support ticket
+[span] Customer: Alice Smith
+[strong] Invoice note
+[span] Vendor: Jordan Lee
+[h2] Result
+[label] Debug
+[button] Add mask
+[button] Download
+[button] Scan image
+[p] Image ready. OCR will run locally in your browser.
+[summary] OCR debug
+[strong] 100% local
+[span] Inference runs in your browser. No text is uploaded.
+[strong] Open model
+[span] Powered by the public openai/privacy-filter weights.
+[strong] WebGPU + WASM
+[span] Hardware-accelerated when available, with a WASM fallback.
+[strong] Free forever
+[span] No sign-up, no quota, no tracking — just paste and go.
+[h2] How Privacy Filter works
+[strong] Load the model in your browser
+[p] The openai/privacy-filter weights are downloaded once from Hugging Face and cached for future visits.
+[strong] Run token classification locally
+[p] Transformers.js executes the model on WebGPU when available, with WebAssembly as a fallback.
+[strong] Review and copy
+[p] Inspect the highlighted entities, copy the redacted text, or paste new content — nothing ever leaves your device.
+[h2] Supported entity types
+[p] The model outputs 8 privacy span categories (BIOES-tagged at the token level).
+[strong] Name
+[code] private_person
+[p] Names and personal identifiers.
+[strong] Email
+[code] private_email
+[p] Personal email addresses.
+[strong] Phone number
+[code] private_phone
+[p] Personal phone numbers.
+[strong] Address
+[code] private_address
+[p] Personal residential or mailing addresses.
+[strong] Account number
+[code] account_number
+[p] Financial or service account identifiers.
+[strong] Date
+[code] private_date
+[p] Personal dates such as birthdays.
+[strong] URL
+[code] private_url
+[p] Personal URLs or web addresses.
+[strong] Secret
+[code] secret
+[p] Credentials, tokens, API keys, and other secrets.
+[h2] Use cases
+[strong] Sanitize prompts to LLMs
+[p] Run a quick privacy clean before pasting into ChatGPT, Claude, Gemini, or any chatbot — strip personal details in one pass.
+[strong] Scrub logs and tickets
+[p] Redact customer data from support tickets, error logs, and bug reports before sharing.
+[strong] Share documents safely
+[p] Mask names, addresses, and account numbers before sending screenshots or text snippets.
+[strong] Audit content for secrets
+[p] Catch API keys and tokens accidentally embedded in documentation, README files, or chat threads.
+[h2] Frequently asked questions
+[span] Is my text uploaded to a server?
+[p] No. Inference runs entirely in your browser through Transformers.js. After the initial model download from Hugging Face, your text never leaves the device.
+[span] What kinds of personal information can it detect?
+[p] Names, emails, phone numbers, addresses, account numbers, dates, URLs, and secrets such as API keys or tokens.
+[span] Which browsers are supported?
+[p] Chrome and Edge with WebGPU offer the fastest performance. Other modern browsers fall back to WebAssembly automatically.
+[span] Why is the first detection slow?
+[p] The first run downloads the openai/privacy-filter weights. Subsequent runs use the browser cache and are noticeably faster.
+[span] Is Privacy Filter free?
+[p] Yes. The page is free to use, and the underlying openai/privacy-filter model is published with open weights on Hugging Face.
+[span] Can it replace a regex-based redactor?
+[p] For most natural-language text, a contextual model catches entities that regex misses (multilingual names, free-form addresses) — though combining both gives the best coverage.
+[span] Star on GitHub
+[p] Powered by openai/privacy-filter and Transformers.js. Runs 100% locally — your data stays on your device.
+[a] Source code
+[a] MIT License
+[a] Contribute
+[a] Report an issue
+[a] openai/privacy-filter
+[a] Transformers.js

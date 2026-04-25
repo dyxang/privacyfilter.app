@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #f6f8fb;
+        color: #142033;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      [data-composition-id="main"] {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 78% 18%, rgba(23, 105, 224, 0.12), transparent 360px),
+          radial-gradient(circle at 18% 82%, rgba(23, 105, 224, 0.08), transparent 320px),
+          #f6f8fb;
+      }
+
+      .grid-bg {
+        position: absolute;
+        inset: 0;
+        opacity: 0.62;
+        background-image:
+          linear-gradient(#dbe2ec 1px, transparent 1px),
+          linear-gradient(90deg, #dbe2ec 1px, transparent 1px);
+        background-size: 64px 64px;
+        z-index: 0;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 86px 104px;
+        z-index: 2;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .brand {
+        position: absolute;
+        top: 50px;
+        left: 70px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        z-index: 20;
+      }
+
+      .pf-mark {
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        border: 3px solid #0d4faf;
+        background: #ffffff;
+        color: #0d4faf;
+        font-size: 19px;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .brand-name {
+        color: #142033;
+        font-size: 26px;
+        font-weight: 850;
+        letter-spacing: 0;
+      }
+
+      .scene-one {
+        align-items: center;
+        gap: 48px;
+      }
+
+      .headline-block {
+        width: 560px;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #1769e0;
+        font-size: 23px;
+        font-weight: 850;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        background: #1769e0;
+      }
+
+      h1 {
+        max-width: 560px;
+        color: #142033;
+        font-size: 76px;
+        font-weight: 900;
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .subline {
+        max-width: 540px;
+        color: #142033;
+        font-size: 31px;
+        line-height: 1.34;
+        font-weight: 600;
+      }
+
+      .badge-row,
+      .proof-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .badge,
+      .proof {
+        display: flex;
+        align-items: center;
+        min-height: 54px;
+        border: 1px solid #dbe2ec;
+        background: #ffffff;
+        padding: 13px 18px;
+        color: #142033;
+        font-size: 21px;
+        font-weight: 800;
+        box-shadow: 0 18px 45px rgba(20, 32, 51, 0.08);
+      }
+
+      .proof strong {
+        color: #1769e0;
+        font-weight: 900;
+      }
+
+      .screen-frame {
+        position: relative;
+        width: 980px;
+        height: 650px;
+        overflow: hidden;
+        border: 1px solid #dbe2ec;
+        background: #ffffff;
+        box-shadow: 0 44px 95px rgba(20, 32, 51, 0.2);
+      }
+
+      .screen-frame.large {
+        width: 1020px;
+        height: 490px;
+      }
+
+      .screen-frame img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .screen-one img,
+      .screen-two img {
+        object-fit: contain;
+        background: #ffffff;
+      }
+
+      .screen-one img {
+        object-position: 50% 0%;
+      }
+
+      .screen-two img {
+        object-position: 49% 15%;
+      }
+
+      .screen-three-a img {
+        object-position: 50% 25%;
+      }
+
+      .screen-three-b img {
+        object-position: 50% 40%;
+      }
+
+      .screen-four img {
+        object-position: 50% 100%;
+      }
+
+      .scan-line {
+        position: absolute;
+        left: 6px;
+        top: 96px;
+        width: 486px;
+        height: 5px;
+        background: #1769e0;
+        box-shadow: 0 0 26px rgba(23, 105, 224, 0.55);
+        z-index: 5;
+        opacity: 0;
+      }
+
+      .corner {
+        position: absolute;
+        width: 74px;
+        height: 74px;
+        border-color: #1769e0;
+        z-index: 6;
+      }
+
+      .corner.tl {
+        top: 76px;
+        left: 6px;
+        border-top: 5px solid;
+        border-left: 5px solid;
+      }
+
+      .corner.br {
+        left: 418px;
+        top: 326px;
+        border-right: 5px solid;
+        border-bottom: 5px solid;
+      }
+
+      .scene-two {
+        align-items: center;
+        justify-content: center;
+      }
+
+      .scene-two-layout {
+        display: grid;
+        grid-template-columns: 720px 850px;
+        gap: 56px;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      .callout-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .scene-two .callout-stack {
+        gap: 18px;
+      }
+
+      .scene-two .big-line {
+        font-size: 58px;
+        line-height: 1.04;
+      }
+
+      .screen-two.large {
+        width: 720px;
+        height: 346px;
+      }
+
+      .result-zoom {
+        position: relative;
+        width: 760px;
+        height: 730px;
+        overflow: hidden;
+        border: 1px solid #dbe2ec;
+        background: #ffffff;
+        box-shadow: 0 32px 78px rgba(20, 32, 51, 0.16);
+      }
+
+      .result-zoom img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .result-mask {
+        position: absolute;
+        height: 23px;
+        background: #1769e0;
+        z-index: 8;
+        opacity: 0.96;
+      }
+
+      .rm-name {
+        left: 366px;
+        top: 502px;
+        width: 73px;
+      }
+
+      .rm-email {
+        left: 483px;
+        top: 502px;
+        width: 85px;
+      }
+
+      .rm-date {
+        left: 38px;
+        top: 535px;
+        width: 73px;
+      }
+
+      .rm-phone {
+        left: 354px;
+        top: 535px;
+        width: 85px;
+      }
+
+      .rm-account {
+        left: 38px;
+        top: 566px;
+        width: 190px;
+      }
+
+      .rm-secret {
+        left: 577px;
+        top: 566px;
+        width: 96px;
+      }
+
+      .big-line {
+        color: #142033;
+        font-size: 72px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .local-map {
+        position: relative;
+        height: 360px;
+        border: 1px solid #dbe2ec;
+        background: #ffffff;
+        overflow: hidden;
+      }
+
+      .map-node {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 190px;
+        height: 88px;
+        border: 1px solid #dbe2ec;
+        background: #fbfcfe;
+        color: #142033;
+        font-size: 23px;
+        font-weight: 850;
+        z-index: 3;
+      }
+
+      .node-input {
+        left: 48px;
+        top: 136px;
+      }
+
+      .node-model {
+        left: 322px;
+        top: 74px;
+        border-color: #1769e0;
+        color: #1769e0;
+      }
+
+      .node-output {
+        right: 48px;
+        top: 136px;
+      }
+
+      .route {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+      }
+
+      .route path {
+        fill: none;
+        stroke: #1769e0;
+        stroke-width: 7;
+        stroke-linecap: square;
+        stroke-dasharray: 980;
+        stroke-dashoffset: 980;
+      }
+
+      .no-cloud {
+        position: absolute;
+        bottom: 28px;
+        left: 48px;
+        right: 48px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        color: #142033;
+        font-size: 22px;
+        font-weight: 800;
+        z-index: 4;
+      }
+
+      .entity-label {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 8px 13px;
+        border: 1px solid #dbe2ec;
+        background: #eef3fa;
+        color: #142033;
+        font-size: 19px;
+        font-weight: 900;
+        z-index: 8;
+      }
+
+      .e-name {
+        left: 222px;
+        top: 220px;
+      }
+
+      .e-email {
+        left: 414px;
+        top: 220px;
+      }
+
+      .e-phone {
+        left: 178px;
+        top: 303px;
+      }
+
+      .e-account {
+        left: 312px;
+        top: 346px;
+      }
+
+      .e-secret {
+        left: 462px;
+        top: 392px;
+      }
+
+      .redaction {
+        position: absolute;
+        height: 20px;
+        background: #1769e0;
+        z-index: 7;
+      }
+
+      .r-one {
+        left: 348px;
+        top: 258px;
+        width: 168px;
+      }
+
+      .r-two {
+        left: 646px;
+        top: 258px;
+        width: 255px;
+      }
+
+      .r-three {
+        left: 342px;
+        top: 332px;
+        width: 212px;
+      }
+
+      .scene-three {
+        display: grid;
+        grid-template-columns: 780px 1fr;
+        gap: 48px;
+        align-items: center;
+      }
+
+      .scene-three .callout-stack {
+        gap: 26px;
+      }
+
+      .scene-three .big-line {
+        max-width: 790px;
+        font-size: 58px;
+        line-height: 1.05;
+      }
+
+      .panel-stack {
+        position: relative;
+        height: 650px;
+      }
+
+      .panel-stack .screen-frame {
+        position: absolute;
+      }
+
+      .screen-three-a {
+        left: 0;
+        top: 154px;
+        width: 760px;
+        height: 300px;
+        z-index: 2;
+      }
+
+      .screen-three-b {
+        left: 62px;
+        top: 0;
+        width: 710px;
+        height: 500px;
+        z-index: 1;
+        opacity: 0.82;
+      }
+
+      .mask {
+        position: absolute;
+        left: 224px;
+        width: 300px;
+        height: 26px;
+        background: #1769e0;
+        z-index: 6;
+      }
+
+      .m-email {
+        top: 230px;
+      }
+
+      .m-phone {
+        top: 282px;
+        width: 250px;
+      }
+
+      .m-token {
+        top: 334px;
+        width: 360px;
+      }
+
+      .entity-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+      }
+
+      .entity-card {
+        min-height: 104px;
+        border: 1px solid #dbe2ec;
+        background: #ffffff;
+        padding: 18px 20px;
+        box-shadow: 0 18px 38px rgba(20, 32, 51, 0.08);
+      }
+
+      .entity-card strong {
+        display: block;
+        color: #142033;
+        font-size: 25px;
+        font-weight: 900;
+        margin-bottom: 10px;
+      }
+
+      .entity-card code {
+        display: inline-flex;
+        background: #eef3fa;
+        color: #142033;
+        padding: 5px 8px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 17px;
+        font-weight: 800;
+      }
+
+      .scene-four {
+        align-items: center;
+        justify-content: center;
+      }
+
+      .final-layout {
+        width: 1420px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 72px;
+      }
+
+      .final-proof {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        width: 100%;
+      }
+
+      .proof-tile {
+        min-height: 188px;
+        border: 1px solid #dbe2ec;
+        background: #ffffff;
+        padding: 30px;
+        box-shadow: 0 20px 48px rgba(20, 32, 51, 0.09);
+      }
+
+      .proof-tile b {
+        display: block;
+        margin-bottom: 14px;
+        color: #1769e0;
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      .proof-tile span {
+        display: block;
+        color: #142033;
+        font-size: 48px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+
+      .brand-lockup .pf-mark {
+        width: 78px;
+        height: 78px;
+        font-size: 27px;
+      }
+
+      .lock-text {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .lock-title {
+        color: #142033;
+        font-size: 48px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .lock-url {
+        color: #1769e0;
+        font-size: 64px;
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .github-icon {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="20"
+      data-width="1920"
+      data-height="1080"
+    >
+      <audio
+        id="narration"
+        src="narration.wav"
+        data-start="0"
+        data-duration="16.5"
+        data-track-index="0"
+        data-volume="1"
+      ></audio>
+
+      <div class="grid-bg"></div>
+
+      <div class="brand">
+        <div class="pf-mark">PF</div>
+        <div class="brand-name">Privacy Filter</div>
+      </div>
+
+      <section class="scene scene-one">
+        <div class="headline-block">
+          <div class="eyebrow">Open source privacy workbench</div>
+          <h1>Clean private data before you share it.</h1>
+          <p class="subline">Free forever. Local in your browser. No upload required.</p>
+          <div class="badge-row">
+            <div class="badge"><img class="github-icon" src="capture/assets/svgs/icon-0.svg" alt="" />Open source</div>
+            <div class="badge">Free forever</div>
+          </div>
+        </div>
+        <div class="screen-frame screen-frame large screen-one">
+          <img src="capture/screenshots/detected-text-panels.png" alt="Privacy Filter text detection interface after local detection" />
+          <div class="scan-line"></div>
+          <div class="corner tl"></div>
+          <div class="corner br"></div>
+        </div>
+      </section>
+
+      <section class="scene scene-two">
+        <div class="scene-two-layout">
+          <div class="screen-frame screen-frame large screen-two">
+            <img src="capture/screenshots/detected-text-panels-workbench.png" alt="Privacy Filter input and results after detection" />
+          </div>
+          <div class="callout-stack">
+            <div class="big-line">Runs entirely in your browser.</div>
+            <div class="proof-row">
+              <div class="proof"><strong>8</strong>&nbsp;PII categories</div>
+              <div class="proof">WebGPU + WASM</div>
+            </div>
+            <div class="result-zoom">
+              <img src="capture/screenshots/detected-results-panel.png" alt="Zoomed Privacy Filter results panel" />
+              <div class="result-mask rm-name"></div>
+              <div class="result-mask rm-email"></div>
+              <div class="result-mask rm-date"></div>
+              <div class="result-mask rm-phone"></div>
+              <div class="result-mask rm-account"></div>
+              <div class="result-mask rm-secret"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene scene-three">
+        <div class="panel-stack">
+          <div class="screen-frame screen-three-a">
+            <img src="capture/screenshots/public-image-scan-section.png" alt="Privacy Filter image OCR workbench after local scan" />
+          </div>
+        </div>
+        <div class="callout-stack">
+          <div class="big-line">Redact text or screenshots locally.</div>
+          <div class="entity-grid">
+            <div class="entity-card"><strong>Name</strong><code>private_person</code></div>
+            <div class="entity-card"><strong>Email</strong><code>private_email</code></div>
+            <div class="entity-card"><strong>Phone</strong><code>private_phone</code></div>
+            <div class="entity-card"><strong>Account</strong><code>account_number</code></div>
+            <div class="entity-card"><strong>URL</strong><code>private_url</code></div>
+            <div class="entity-card"><strong>Secret</strong><code>secret</code></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene scene-four">
+        <div class="final-layout">
+          <div class="final-proof">
+            <div class="proof-tile"><b>Open source</b><span>MIT source</span></div>
+            <div class="proof-tile"><b>Free</b><span>No quota</span></div>
+            <div class="proof-tile"><b>Local only</b><span>No upload</span></div>
+          </div>
+          <div class="brand-lockup">
+            <div class="pf-mark">PF</div>
+            <div class="lock-text">
+              <div class="lock-url"><img class="github-icon" src="capture/assets/svgs/icon-1.svg" alt="" />privacyfilter.app</div>
+              <div class="lock-title">Privacy Filter Online</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      gsap.set(".scene-one", { opacity: 1 });
+      gsap.set([".scene-two", ".scene-three", ".scene-four"], { opacity: 0 });
+      gsap.set(".scan-line", { y: 0, opacity: 0 });
+
+      tl.from(".brand", { y: -40, opacity: 0, duration: 0.55, ease: "power3.out" }, 0);
+      tl.from(".scene-one .eyebrow", { y: 24, opacity: 0, duration: 0.5, ease: "power3.out" }, 0.15);
+      tl.from(".scene-one h1", { y: 46, opacity: 0, duration: 0.65, ease: "power3.out" }, 0.35);
+      tl.from(".scene-one .subline", { y: 32, opacity: 0, duration: 0.55, ease: "power3.out" }, 0.9);
+      tl.from(".scene-one .badge", { y: 26, opacity: 0, duration: 0.45, stagger: 0.12, ease: "power2.out" }, 1.45);
+      tl.from(".screen-one", { x: 130, y: 40, rotation: 2, opacity: 0, duration: 0.85, ease: "power3.out" }, 0.45);
+      tl.to(".screen-one img", { scale: 1.035, duration: 4.3, ease: "sine.inOut" }, 0.45);
+      tl.from(".corner", { opacity: 0, scale: 0.7, duration: 0.35, stagger: 0.08, ease: "power2.out" }, 1.25);
+      tl.set(".scan-line", { opacity: 1 }, 1.35);
+      tl.to(".scan-line", { y: 250, duration: 2.3, ease: "power1.inOut" }, 1.35);
+      tl.to(".scan-line", { opacity: 0, duration: 0.18, ease: "power2.out" }, 3.62);
+
+      tl.to(".scene-one", { y: -150, opacity: 0, filter: "blur(22px)", duration: 0.35, ease: "power2.in" }, 4.55);
+      tl.set(".scene-two", { opacity: 1, y: 120, filter: "blur(18px)" }, 4.7);
+      tl.to(".scene-two", { y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 4.75);
+      tl.from(".screen-two", { x: -120, opacity: 0, duration: 0.55, ease: "power3.out" }, 4.9);
+      tl.to(".screen-two img", { scale: 1.035, duration: 5.6, ease: "sine.inOut" }, 4.9);
+      tl.from(".scene-two .big-line", { y: 38, opacity: 0, duration: 0.55, ease: "power3.out" }, 5.05);
+      tl.from(".scene-two .proof", { y: 28, opacity: 0, duration: 0.45, stagger: 0.12, ease: "power2.out" }, 5.65);
+      tl.from(".result-zoom", { y: 34, scale: 0.92, opacity: 0, duration: 0.58, ease: "power3.out" }, 6.15);
+      tl.to(".result-zoom img", { scale: 1.025, duration: 4.1, ease: "sine.inOut" }, 6.35);
+      tl.from(".result-mask", { scaleX: 0, transformOrigin: "left center", opacity: 0, duration: 0.28, stagger: 0.11, ease: "power2.out" }, 8.05);
+
+      tl.to(".scene-two", { x: -380, opacity: 0, filter: "blur(24px)", duration: 0.32, ease: "power3.in" }, 10.55);
+      tl.set(".scene-three", { opacity: 1, x: 360, filter: "blur(24px)" }, 10.72);
+      tl.to(".scene-three", { x: 0, filter: "blur(0px)", duration: 0.42, ease: "power3.out" }, 10.78);
+      tl.from(".screen-three-a", { y: 70, opacity: 0, duration: 0.45, ease: "power3.out" }, 10.9);
+      tl.to(".screen-three-a img", { scale: 1.03, duration: 2.2, ease: "sine.inOut" }, 10.9);
+      tl.from(".scene-three .big-line", { y: 34, opacity: 0, duration: 0.42, ease: "power3.out" }, 11.0);
+      tl.from(".entity-card", { y: 32, opacity: 0, duration: 0.32, stagger: 0.07, ease: "power2.out" }, 11.45);
+
+      tl.to(".scene-three", { opacity: 0, filter: "blur(18px)", duration: 0.28, ease: "power2.in" }, 12.88);
+      tl.set(".scene-four", { opacity: 1, y: 80, filter: "blur(16px)" }, 13.02);
+      tl.to(".scene-four", { y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 13.1);
+      tl.from(".proof-tile", { y: 36, opacity: 0, duration: 0.5, stagger: 0.16, ease: "power3.out" }, 13.18);
+      tl.from(".brand-lockup", { y: 40, opacity: 0, duration: 0.65, ease: "power3.out" }, 14.45);
+      tl.to(".brand-lockup .pf-mark", { scale: 1.06, duration: 0.42, ease: "power2.inOut", yoyo: true, repeat: 2 }, 17.15);
+      tl.to(".grid-bg", { opacity: 0.38, duration: 2.6, ease: "sine.inOut" }, 17.4);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

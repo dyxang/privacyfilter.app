@@ -1,0 +1,1694 @@
+---
+import "../styles/global.css";
+import {
+  i18n,
+  demos,
+  seo,
+  localeNames,
+  routeToLocale,
+  localeToHtmlLang,
+  localeToOgLocale
+} from "../lib/i18n.js";
+
+export function getStaticPaths() {
+  return [
+    { params: { locale: undefined } },
+    { params: { locale: "ja" } },
+    { params: { locale: "zh-hans" } },
+    { params: { locale: "zh-hant" } }
+  ];
+}
+
+const { locale: pathLocale } = Astro.params;
+const locale = routeToLocale[pathLocale ?? ""] ?? "en";
+const t = i18n[locale];
+const meta = seo[locale];
+const htmlLang = localeToHtmlLang[locale];
+const ogLocale = localeToOgLocale[locale];
+const initialDemo = demos.find((d) => d.locale === locale) ?? demos[0];
+const sampleText = initialDemo.text;
+const currentPath = pathLocale ? `/${pathLocale}/` : "/";
+const ogAlternates = localeNames
+  .filter((l) => l.locale !== locale)
+  .map((l) => localeToOgLocale[l.locale]);
+const currentLocaleInfo = localeNames.find((l) => l.locale === locale) ?? localeNames[0];
+const analyticsDomain = import.meta.env.PUBLIC_ANALYTICS_DOMAIN;
+const analyticsSrc = import.meta.env.PUBLIC_ANALYTICS_SRC;
+const repoUrl = "https://github.com/becoolme/privacyfilter.app";
+const repoIssuesUrl = `${repoUrl}/issues`;
+const repoLicenseUrl = `${repoUrl}/blob/main/LICENSE`;
+const repoContribUrl = `${repoUrl}/blob/main/CONTRIBUTING.md`;
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{meta.pageTitle}</title>
+    <meta name="description" content={meta.metaDescription} />
+    <meta
+      name="keywords"
+      content="privacy filter, PII detection, redact text online, openai privacy filter, browser PII detector, transformers.js, WebGPU NER, anonymize text, data redaction, secrets scanner"
+    />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="theme-color" content="#1769e0" />
+    <meta name="color-scheme" content="light" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231769e0'/%3E%3Cpath d='M50 22 28 32v18c0 14 9 22 22 28 13-6 22-14 22-28V32L50 22zm0 14 14 6v8c0 9-6 14-14 18-8-4-14-9-14-18v-8l14-6z' fill='%23fff'/%3E%3C/svg%3E"
+    />
+
+    {localeNames.map((l) => (
+      <link
+        rel="alternate"
+        hreflang={localeToHtmlLang[l.locale]}
+        href={l.path}
+      />
+    ))}
+    <link rel="alternate" hreflang="x-default" href="/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={meta.ogTitle} />
+    <meta property="og:description" content={meta.ogDescription} />
+    <meta property="og:site_name" content="Privacy Filter" />
+    <meta property="og:locale" content={ogLocale} />
+    {ogAlternates.map((alt) => (
+      <meta property="og:locale:alternate" content={alt} />
+    ))}
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.ogTitle} />
+    <meta name="twitter:description" content={meta.ogDescription} />
+
+    <link rel="preconnect" href="https://huggingface.co" crossorigin />
+    <link rel="dns-prefetch" href="https://huggingface.co" />
+    <link rel="preconnect" href="https://cdn-lfs.huggingface.co" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn-lfs.huggingface.co" />
+
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "Privacy Filter",
+        description: meta.metaDescription,
+        applicationCategory: "SecurityApplication",
+        operatingSystem: "Any (Web)",
+        browserRequirements:
+          "Chrome or Edge with WebGPU recommended; falls back to WebAssembly on other modern browsers.",
+        isAccessibleForFree: true,
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+        inLanguage: htmlLang,
+        featureList: [
+          t.trust1Title + " — " + t.trust1Body,
+          t.trust2Title + " — " + t.trust2Body,
+          t.trust3Title + " — " + t.trust3Body,
+          t.trust4Title + " — " + t.trust4Body
+        ]
+      })}
+    />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        inLanguage: htmlLang,
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: t.faq1Q,
+            acceptedAnswer: { "@type": "Answer", text: t.faq1A }
+          },
+          {
+            "@type": "Question",
+            name: t.faq2Q,
+            acceptedAnswer: { "@type": "Answer", text: t.faq2A }
+          },
+          {
+            "@type": "Question",
+            name: t.faq3Q,
+            acceptedAnswer: { "@type": "Answer", text: t.faq3A }
+          },
+          {
+            "@type": "Question",
+            name: t.faq4Q,
+            acceptedAnswer: { "@type": "Answer", text: t.faq4A }
+          },
+          {
+            "@type": "Question",
+            name: t.faq5Q,
+            acceptedAnswer: { "@type": "Answer", text: t.faq5A }
+          },
+          {
+            "@type": "Question",
+            name: t.faq6Q,
+            acceptedAnswer: { "@type": "Answer", text: t.faq6A }
+          }
+        ]
+      })}
+    />
+
+    {analyticsDomain && analyticsSrc && (
+      <script defer data-domain={analyticsDomain} src={analyticsSrc}></script>
+    )}
+  </head>
+  <body class="bg-bg text-text">
+    <main class="mx-auto w-full max-w-[1180px] px-4 py-8 lg:py-9">
+      <header
+        role="banner"
+        class="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 pt-1 pb-5"
+      >
+        <a
+          class="inline-flex items-center gap-2.5 text-text no-underline"
+          href={currentPath}
+          aria-label={t.homeLinkLabel}
+        >
+          <span
+            aria-hidden="true"
+            class="inline-grid place-items-center w-[30px] h-[30px] bg-accent text-white text-xs font-extrabold tracking-wider"
+            >PF</span
+          >
+          <strong class="font-extrabold tracking-tight text-base">Privacy Filter</strong>
+        </a>
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <nav
+            aria-label="Primary"
+            class="hidden sm:flex flex-wrap gap-x-5 gap-y-1 text-sm"
+          >
+            <a class="text-muted no-underline hover:text-accent transition-colors" href="#how-it-works">{t.navHow}</a>
+            <a class="text-muted no-underline hover:text-accent transition-colors" href="#entity-types">{t.navEntities}</a>
+            <a class="text-muted no-underline hover:text-accent transition-colors" href="#use-cases">{t.navUseCases}</a>
+            <a class="text-muted no-underline hover:text-accent transition-colors" href="#faq">{t.navFaq}</a>
+            <a class="text-muted no-underline hover:text-accent transition-colors" href="https://huggingface.co/openai/privacy-filter" target="_blank" rel="noopener">{t.navModel}</a>
+            <a
+              class="inline-flex items-center gap-1.5 text-muted no-underline hover:text-accent transition-colors"
+              href={repoUrl}
+              target="_blank"
+              rel="noopener"
+              aria-label={t.navGithub}
+            >
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+              </svg>
+              <span>{t.navGithub}</span>
+            </a>
+          </nav>
+          <details class="relative" aria-label={t.languageMenu}>
+            <summary
+              class="flex items-center gap-1.5 px-3 py-1.5 border border-line bg-white text-sm font-medium cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden hover:border-accent transition-colors"
+            >
+              <span lang={localeToHtmlLang[locale]}>{currentLocaleInfo.label}</span>
+              <span aria-hidden="true" class="text-muted text-[10px]">▾</span>
+            </summary>
+            <div
+              class="absolute right-0 top-full mt-1 z-20 min-w-[160px] py-1 border border-line bg-white shadow-[0_12px_28px_rgba(20,32,51,0.14)]"
+              role="menu"
+            >
+              {localeNames.map((l) =>
+                l.locale === locale ? (
+                  <span
+                    class="block px-3 py-1.5 text-sm bg-bg text-text font-semibold"
+                    aria-current="page"
+                    lang={localeToHtmlLang[l.locale]}
+                  >
+                    {l.label}
+                  </span>
+                ) : (
+                  <a
+                    class="block px-3 py-1.5 text-sm text-text no-underline hover:bg-bg transition-colors"
+                    href={l.path}
+                    hreflang={localeToHtmlLang[l.locale]}
+                    lang={localeToHtmlLang[l.locale]}
+                    role="menuitem"
+                  >
+                    {l.label}
+                  </a>
+                )
+              )}
+            </div>
+          </details>
+        </div>
+      </header>
+
+      <section
+        class="grid grid-cols-1 md:grid-cols-[1fr_minmax(280px,380px)] gap-6 items-end mb-6"
+      >
+        <div>
+          <h1
+            class="max-w-[760px] mb-3 text-[clamp(34px,5vw,58px)] leading-[1.04] tracking-tight font-bold"
+          >
+            {t.title}
+          </h1>
+          <p class="max-w-[760px] m-0 text-muted text-[17px] leading-[1.65]">
+            {t.summary}
+          </p>
+        </div>
+        <div
+          aria-live="polite"
+          class="grid grid-cols-[14px_1fr] gap-3 p-[18px] border border-line bg-panel"
+        >
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <p id="statusTitle" class="m-0 mb-1 font-bold">{t.statusIdleTitle}</p>
+            <small id="statusDetail" class="text-muted leading-[1.5]">{t.statusIdleDetail}</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+        <div
+          class="border border-line bg-panel overflow-hidden"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-[18px] py-4 min-h-[84px] border-b border-line"
+          >
+            <h2 class="m-0 text-lg font-semibold">{t.inputTitle}</h2>
+            <button
+              id="runButton"
+              type="button"
+              class="min-h-[38px] px-3.5 border border-accent bg-accent text-white font-bold cursor-pointer hover:bg-accent-dark disabled:opacity-55 disabled:cursor-not-allowed transition-colors"
+              >{t.runButton}</button
+            >
+          </div>
+          <textarea
+            id="inputText"
+            spellcheck="false"
+            class="w-full min-h-[360px] m-0 border-0 p-[18px] resize-y bg-[#fbfcfe] text-text text-[15px] leading-[1.7] whitespace-pre-wrap focus:outline focus:outline-2 focus:[outline-color:rgba(23,105,224,0.25)] focus:-outline-offset-2"
+            >{sampleText}</textarea
+          >
+          <div
+            class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 border-t border-line p-3 bg-white"
+            id="demoStrip"
+            aria-label="Demo texts"
+          ></div>
+        </div>
+
+        <div
+          class="border border-line bg-panel overflow-hidden"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-[18px] py-4 min-h-[84px] border-b border-line"
+          >
+            <div class="flex items-center gap-2">
+              <h2 class="m-0 text-lg font-semibold">{t.outputTitle}</h2>
+              <span
+                id="spanCount"
+                class="hidden items-center justify-center min-w-[1.5rem] h-6 px-2 bg-accent text-white text-xs font-bold leading-none"
+                aria-live="polite"
+                aria-label={t.spansBadgeLabel}
+              >0</span>
+            </div>
+            <button
+              id="copyButton"
+              type="button"
+              disabled
+              class="min-h-[38px] px-3.5 border border-line bg-white text-text font-bold cursor-pointer hover:border-accent hover:text-accent disabled:opacity-55 disabled:cursor-not-allowed transition-colors"
+              >{t.copyButton}</button
+            >
+          </div>
+          <div class="grid bg-[#fbfcfe]">
+            <section>
+              <h3 class="m-0 px-[18px] pt-3 text-[13px] font-bold text-muted">{t.annotatedTitle}</h3>
+              <div
+                id="annotatedText"
+                class="w-full min-h-[120px] m-0 border-0 px-[18px] pt-2.5 pb-3.5 bg-[#fbfcfe] text-text text-[15px] leading-[1.65] whitespace-pre-wrap [overflow-wrap:anywhere]"
+              >
+                {t.annotatedIdle}
+              </div>
+            </section>
+            <section class="border-t border-line">
+              <h3 class="m-0 px-[18px] pt-3 text-[13px] font-bold text-muted">{t.redactedTitle}</h3>
+              <pre
+                id="redactedText"
+                class="w-full min-h-[160px] m-0 border-0 px-[18px] pt-3.5 pb-[18px] resize-y bg-[#fbfcfe] text-text text-[15px] leading-[1.65] whitespace-pre-wrap"
+                >{t.redactedIdle}</pre>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5 items-stretch">
+        <div
+          class="border border-line bg-panel overflow-hidden flex flex-col"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-[18px] py-4 min-h-[84px] border-b border-line"
+          >
+            <div>
+              <h2 class="m-0 text-lg font-semibold">{t.imageInputTitle ?? "Image input"}</h2>
+              <p class="mt-1 mb-0 text-sm text-muted">{t.imageInputHint ?? "Run local OCR, then map detected privacy labels back onto the image."}</p>
+            </div>
+            <label
+              class="inline-flex items-center justify-center min-h-[38px] px-3.5 border border-line bg-white text-text font-bold cursor-pointer hover:border-accent hover:text-accent transition-colors"
+            >
+              {t.imageUploadButton ?? "Upload image"}
+              <input id="imageUpload" class="sr-only" type="file" accept="image/*" />
+            </label>
+          </div>
+          <div class="flex-1 flex flex-col p-[18px] bg-[#fbfcfe]">
+            <div
+              id="imageInputPreviewWrap"
+              class="image-frame relative flex-1 mb-3 overflow-hidden border border-line min-h-[260px]"
+            >
+              <img
+                id="imageInputPreview"
+                class="block w-full h-auto"
+                alt={t.imagePreviewAlt ?? "OCR preview"}
+              />
+            </div>
+            <div
+              class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 border-t border-line pt-3"
+              id="imageDemoStrip"
+              aria-label="Demo images"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="border border-line bg-panel overflow-hidden flex flex-col"
+        >
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-[18px] py-4 min-h-[84px] border-b border-line"
+          >
+            <div class="flex items-center gap-2">
+              <h2 class="m-0 text-lg font-semibold">{t.imageOutputTitle ?? "Image OCR result"}</h2>
+              <span
+                id="imageSpanCount"
+                class="hidden items-center justify-center min-w-[1.5rem] h-6 px-2 bg-accent text-white text-xs font-bold leading-none"
+                aria-live="polite"
+              >0</span>
+            </div>
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
+              <label class="inline-flex items-center gap-2 text-sm text-muted">
+                <input id="imageDebugToggle" type="checkbox" class="accent-accent" />
+                {t.imageDebugLabel ?? "Debug"}
+              </label>
+              <div class="grid grid-cols-3 gap-1.5 w-full sm:w-auto">
+                <button
+                  id="addMaskButton"
+                  type="button"
+                  class="inline-flex min-h-[34px] items-center justify-center px-2.5 border border-line bg-white text-xs leading-none text-text font-bold cursor-pointer hover:border-accent hover:text-accent transition-colors whitespace-nowrap"
+                  >{t.imageAddMaskButton ?? "Add mask"}</button
+                >
+                <button
+                  id="downloadImageButton"
+                  type="button"
+                  class="inline-flex min-h-[34px] items-center justify-center px-2.5 border border-line bg-white text-xs leading-none text-text font-bold cursor-pointer hover:border-accent hover:text-accent transition-colors whitespace-nowrap"
+                  >{t.imageDownloadButton ?? "Download"}</button
+                >
+                <button
+                  id="runImageButton"
+                  type="button"
+                  class="inline-flex min-h-[34px] items-center justify-center px-2.5 border border-accent bg-accent text-xs leading-none text-white font-bold cursor-pointer hover:bg-accent-dark disabled:opacity-55 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                  >{t.imageRunButton ?? "Scan image"}</button
+                >
+              </div>
+            </div>
+          </div>
+          <div class="flex-1 flex flex-col gap-3 p-[18px] bg-[#fbfcfe]">
+            <p id="imageStatus" class="m-0 text-sm text-muted" aria-live="polite">
+              {t.imageStatusIdle ?? "Choose a demo image or upload your own image."}
+            </p>
+            <div
+              id="imagePreviewWrap"
+              class="image-frame relative flex-1 overflow-hidden border border-line min-h-[260px]"
+            >
+              <canvas
+                id="imageCanvas"
+                class="block w-full h-auto cursor-crosshair touch-none"
+                aria-label={t.imagePreviewAlt ?? "OCR preview"}
+              ></canvas>
+            </div>
+            <details id="imageDebugPanel" class="hidden border border-line bg-white">
+              <summary class="cursor-pointer px-3 py-2 text-sm font-bold text-text">
+                {t.imageDebugTitle ?? "OCR debug"}
+              </summary>
+              <pre
+                id="imageDebugOutput"
+                class="m-0 max-h-[360px] overflow-auto border-t border-line p-3 text-xs leading-relaxed whitespace-pre-wrap"
+              ></pre>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section
+        aria-label="Privacy guarantees"
+        class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 mt-5 mb-6 p-[18px] border border-line bg-panel"
+      >
+        <div class="grid gap-1 md:px-1 md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:border-line md:[&:not(:first-child)]:pl-[18px]">
+          <strong class="text-sm text-text">{t.trust1Title}</strong>
+          <span class="text-[13px] text-muted leading-[1.55]">{t.trust1Body}</span>
+        </div>
+        <div class="grid gap-1 md:px-1 md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:border-line md:[&:not(:first-child)]:pl-[18px]">
+          <strong class="text-sm text-text">{t.trust2Title}</strong>
+          <span class="text-[13px] text-muted leading-[1.55]">{t.trust2Body}</span>
+        </div>
+        <div class="grid gap-1 md:px-1 md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:border-line md:[&:not(:first-child)]:pl-[18px]">
+          <strong class="text-sm text-text">{t.trust3Title}</strong>
+          <span class="text-[13px] text-muted leading-[1.55]">{t.trust3Body}</span>
+        </div>
+        <div class="grid gap-1 md:px-1 md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:border-line md:[&:not(:first-child)]:pl-[18px]">
+          <strong class="text-sm text-text">{t.trust4Title}</strong>
+          <span class="text-[13px] text-muted leading-[1.55]">{t.trust4Body}</span>
+        </div>
+      </section>
+
+      <section
+        id="how-it-works"
+        aria-labelledby="howTitle"
+        class="border border-line bg-panel overflow-hidden mt-5"
+      >
+        <div class="px-[18px] py-4 border-b border-line">
+          <h2 id="howTitle" class="m-0 text-lg font-semibold">{t.howTitle}</h2>
+        </div>
+        <ol class="grid grid-cols-1 md:grid-cols-3 m-0 p-0 list-none">
+          <li class="px-5 py-[18px] border-b md:border-b-0 md:border-r border-line last:border-b-0 md:last:border-r-0">
+            <span aria-hidden="true" class="inline-grid place-items-center w-[26px] h-[26px] mb-2.5 bg-[rgba(23,105,224,0.12)] text-accent text-[13px] font-extrabold">1</span>
+            <strong class="block mb-1.5 text-[15px]">{t.how1Title}</strong>
+            <p class="m-0 text-muted text-sm leading-[1.6]">{t.how1Body}</p>
+          </li>
+          <li class="px-5 py-[18px] border-b md:border-b-0 md:border-r border-line last:border-b-0 md:last:border-r-0">
+            <span aria-hidden="true" class="inline-grid place-items-center w-[26px] h-[26px] mb-2.5 bg-[rgba(23,105,224,0.12)] text-accent text-[13px] font-extrabold">2</span>
+            <strong class="block mb-1.5 text-[15px]">{t.how2Title}</strong>
+            <p class="m-0 text-muted text-sm leading-[1.6]">{t.how2Body}</p>
+          </li>
+          <li class="px-5 py-[18px] border-b md:border-b-0 md:border-r border-line last:border-b-0 md:last:border-r-0">
+            <span aria-hidden="true" class="inline-grid place-items-center w-[26px] h-[26px] mb-2.5 bg-[rgba(23,105,224,0.12)] text-accent text-[13px] font-extrabold">3</span>
+            <strong class="block mb-1.5 text-[15px]">{t.how3Title}</strong>
+            <p class="m-0 text-muted text-sm leading-[1.6]">{t.how3Body}</p>
+          </li>
+        </ol>
+      </section>
+
+      <section
+        id="entity-types"
+        aria-labelledby="entitiesTitle"
+        class="border border-line bg-panel overflow-hidden mt-5"
+      >
+        <div class="px-[18px] py-4 border-b border-line">
+          <h2 id="entitiesTitle" class="m-0 text-lg font-semibold">{t.entitiesTitle}</h2>
+          <p class="mt-1 mb-0 text-sm text-muted">{t.entitiesIntro}</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-[18px]">
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityPersonTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">private_person</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityPersonBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityEmailTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">private_email</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityEmailBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityPhoneTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">private_phone</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityPhoneBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityAddressTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">private_address</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityAddressBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityAccountTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">account_number</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityAccountBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityDateTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">private_date</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityDateBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entityUrlTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">private_url</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entityUrlBody}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <div class="flex items-center gap-2 mb-1.5">
+              <strong class="text-sm">{t.entitySecretTitle}</strong>
+              <code class="text-[11px] text-muted bg-[#eef3fa] px-1.5 py-0.5">secret</code>
+            </div>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.entitySecretBody}</p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        id="use-cases"
+        aria-labelledby="useCasesTitle"
+        class="border border-line bg-panel overflow-hidden mt-5"
+      >
+        <div class="px-[18px] py-4 border-b border-line">
+          <h2 id="useCasesTitle" class="m-0 text-lg font-semibold">{t.useCasesTitle}</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 p-[18px]">
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <strong class="block mb-1.5 text-sm">{t.case1Title}</strong>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.case1Body}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <strong class="block mb-1.5 text-sm">{t.case2Title}</strong>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.case2Body}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <strong class="block mb-1.5 text-sm">{t.case3Title}</strong>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.case3Body}</p>
+          </article>
+          <article class="border border-line bg-[#fbfcfe] p-3.5">
+            <strong class="block mb-1.5 text-sm">{t.case4Title}</strong>
+            <p class="m-0 text-muted text-[13px] leading-[1.55]">{t.case4Body}</p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        id="faq"
+        aria-labelledby="faqTitle"
+        class="border border-line bg-panel overflow-hidden mt-5"
+      >
+        <div class="px-[18px] py-4 border-b border-line">
+          <h2 id="faqTitle" class="m-0 text-lg font-semibold">{t.faqTitle}</h2>
+        </div>
+        <div class="px-[18px] py-2">
+          <details class="border-b border-line py-3.5 last:border-b-0 group">
+            <summary class="flex justify-between items-center gap-3 cursor-pointer list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+              <span>{t.faq1Q}</span>
+              <span class="text-accent font-extrabold text-lg leading-none group-open:hidden">+</span>
+              <span class="text-accent font-extrabold text-lg leading-none hidden group-open:inline">−</span>
+            </summary>
+            <p class="mt-2.5 mb-0 text-muted text-sm leading-[1.65]">{t.faq1A}</p>
+          </details>
+          <details class="border-b border-line py-3.5 last:border-b-0 group">
+            <summary class="flex justify-between items-center gap-3 cursor-pointer list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+              <span>{t.faq2Q}</span>
+              <span class="text-accent font-extrabold text-lg leading-none group-open:hidden">+</span>
+              <span class="text-accent font-extrabold text-lg leading-none hidden group-open:inline">−</span>
+            </summary>
+            <p class="mt-2.5 mb-0 text-muted text-sm leading-[1.65]">{t.faq2A}</p>
+          </details>
+          <details class="border-b border-line py-3.5 last:border-b-0 group">
+            <summary class="flex justify-between items-center gap-3 cursor-pointer list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+              <span>{t.faq3Q}</span>
+              <span class="text-accent font-extrabold text-lg leading-none group-open:hidden">+</span>
+              <span class="text-accent font-extrabold text-lg leading-none hidden group-open:inline">−</span>
+            </summary>
+            <p class="mt-2.5 mb-0 text-muted text-sm leading-[1.65]">{t.faq3A}</p>
+          </details>
+          <details class="border-b border-line py-3.5 last:border-b-0 group">
+            <summary class="flex justify-between items-center gap-3 cursor-pointer list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+              <span>{t.faq4Q}</span>
+              <span class="text-accent font-extrabold text-lg leading-none group-open:hidden">+</span>
+              <span class="text-accent font-extrabold text-lg leading-none hidden group-open:inline">−</span>
+            </summary>
+            <p class="mt-2.5 mb-0 text-muted text-sm leading-[1.65]">{t.faq4A}</p>
+          </details>
+          <details class="border-b border-line py-3.5 last:border-b-0 group">
+            <summary class="flex justify-between items-center gap-3 cursor-pointer list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+              <span>{t.faq5Q}</span>
+              <span class="text-accent font-extrabold text-lg leading-none group-open:hidden">+</span>
+              <span class="text-accent font-extrabold text-lg leading-none hidden group-open:inline">−</span>
+            </summary>
+            <p class="mt-2.5 mb-0 text-muted text-sm leading-[1.65]">{t.faq5A}</p>
+          </details>
+          <details class="border-b border-line py-3.5 last:border-b-0 group">
+            <summary class="flex justify-between items-center gap-3 cursor-pointer list-none font-bold text-[15px] [&::-webkit-details-marker]:hidden">
+              <span>{t.faq6Q}</span>
+              <span class="text-accent font-extrabold text-lg leading-none group-open:hidden">+</span>
+              <span class="text-accent font-extrabold text-lg leading-none hidden group-open:inline">−</span>
+            </summary>
+            <p class="mt-2.5 mb-0 text-muted text-sm leading-[1.65]">{t.faq6A}</p>
+          </details>
+        </div>
+      </section>
+
+      <footer
+        role="contentinfo"
+        class="mt-7 pt-5 pb-9 border-t border-line text-[13px] text-muted"
+      >
+        <div class="flex flex-col items-center gap-3 text-center">
+          <a
+            class="inline-flex items-center gap-2 px-3 py-1.5 border border-line bg-white text-text no-underline hover:border-accent hover:text-accent transition-colors"
+            href={repoUrl}
+            target="_blank"
+            rel="noopener"
+          >
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+              <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+            <span class="text-sm font-medium">{t.footerStarCta}</span>
+          </a>
+          <p class="my-0">{t.footerText}</p>
+          <nav aria-label={t.footerOpenSource} class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <a class="text-accent hover:underline" href={repoUrl} target="_blank" rel="noopener">{t.footerSource}</a>
+            <a class="text-accent hover:underline" href={repoLicenseUrl} target="_blank" rel="noopener">{t.footerLicense}</a>
+            <a class="text-accent hover:underline" href={repoContribUrl} target="_blank" rel="noopener">{t.footerContribute}</a>
+            <a class="text-accent hover:underline" href={repoIssuesUrl} target="_blank" rel="noopener">{t.footerIssues}</a>
+          </nav>
+          <p class="my-0">
+            <a class="text-accent hover:underline" href="https://huggingface.co/openai/privacy-filter" target="_blank" rel="noopener">openai/privacy-filter</a>
+            ·
+            <a class="text-accent hover:underline" href="https://huggingface.co/docs/transformers.js" target="_blank" rel="noopener">Transformers.js</a>
+          </p>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      import { pipeline, env } from "@huggingface/transformers";
+      import { createWorker } from "tesseract.js";
+      import { i18n, demos } from "../lib/i18n.js";
+
+      env.allowLocalModels = false;
+      env.remoteHost =
+        window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+          ? "https://huggingface.co/"
+          : `${window.location.origin}/hf/`;
+      env.useBrowserCache = true;
+      env.useWasmCache = true;
+      env.cacheKey = "privacy-filter-model-v1";
+
+      const inputText = document.querySelector("#inputText");
+      const runButton = document.querySelector("#runButton");
+      const copyButton = document.querySelector("#copyButton");
+      const demoStrip = document.querySelector("#demoStrip");
+      const annotatedText = document.querySelector("#annotatedText");
+      const redactedText = document.querySelector("#redactedText");
+      const spanCount = document.querySelector("#spanCount");
+      const imageUpload = document.querySelector("#imageUpload");
+      const imageDemoStrip = document.querySelector("#imageDemoStrip");
+      const runImageButton = document.querySelector("#runImageButton");
+      const imageDebugToggle = document.querySelector("#imageDebugToggle");
+      const imageDebugPanel = document.querySelector("#imageDebugPanel");
+      const imageDebugOutput = document.querySelector("#imageDebugOutput");
+      const imageStatus = document.querySelector("#imageStatus");
+      const imageInputPreview = document.querySelector("#imageInputPreview");
+      const imageCanvas = document.querySelector("#imageCanvas");
+      const addMaskButton = document.querySelector("#addMaskButton");
+      const downloadImageButton = document.querySelector("#downloadImageButton");
+      const imageSpanCount = document.querySelector("#imageSpanCount");
+      const statusDot = document.querySelector("#statusDot");
+      const statusTitle = document.querySelector("#statusTitle");
+      const statusDetail = document.querySelector("#statusDetail");
+
+      let classifier = null;
+      let lastRedacted = "";
+      let lastSource = "";
+      let lastSpans = [];
+      const initialLang = document.documentElement.lang || "en";
+      let currentLocale = i18n[initialLang] ? initialLang : "en";
+      let modelPromise = null;
+      let modelLoading = false;
+      let detectTimer = null;
+      let pendingDetection = false;
+      let ocrWorker = null;
+      let ocrPromise = null;
+      let currentImageInput = null;
+      let currentImageObjectUrl = null;
+      let currentImageNaturalSize = { width: 1, height: 1 };
+      let currentImageElement = null;
+      let imageMasks = [];
+      let selectedMaskId = null;
+      let maskDragState = null;
+      let lastImageDebug = null;
+
+      const t = (key, ...args) => {
+        const value = i18n[currentLocale][key] ?? i18n.en[key] ?? key;
+        return typeof value === "function" ? value(...args) : value;
+      };
+
+      const setStatus = (state, title, detail = "") => {
+        statusDot.dataset.state = state;
+        statusTitle.textContent = title;
+        statusDetail.textContent = detail;
+      };
+
+      const getDevice = () => {
+        return "gpu" in navigator ? "webgpu" : "wasm";
+      };
+
+      const labelFor = (label) => i18n[currentLocale].labels[label] || i18n.en.labels[label] || label;
+
+      const labelColors = {
+        account_number: "account",
+        private_address: "address",
+        private_email: "email",
+        private_person: "person",
+        private_phone: "phone",
+        private_url: "url",
+        private_date: "date",
+        secret: "secret"
+      };
+
+      const rawLabelFor = (label) => label.toUpperCase();
+
+      const imageDemos = [
+        {
+          id: "support-ticket",
+          title: "Support ticket",
+          lines: [
+            "Customer: Alice Smith",
+            "Email: alice.smith@example.com",
+            "Phone: +1 (415) 555-0134",
+            "Token: sk-live-1234567890abcdef"
+          ]
+        },
+        {
+          id: "invoice-note",
+          title: "Invoice note",
+          lines: [
+            "Vendor: Jordan Lee",
+            "Account: AC-44092811",
+            "Due: May 9, 2026",
+            "URL: https://billing.example.com/invoice/8842"
+          ]
+        }
+      ];
+
+      const updateSpanCount = (count) => {
+        spanCount.textContent = String(count);
+        spanCount.classList.toggle("hidden", count === 0);
+        spanCount.classList.toggle("inline-flex", count > 0);
+      };
+
+      const updateImageSpanCount = (count) => {
+        imageSpanCount.textContent = String(count);
+        imageSpanCount.classList.toggle("hidden", count === 0);
+        imageSpanCount.classList.toggle("inline-flex", count > 0);
+      };
+
+      const renderImageDebug = () => {
+        const enabled = Boolean(imageDebugToggle.checked);
+        imageDebugPanel.classList.toggle("hidden", !enabled);
+
+        if (!enabled) return;
+        imageDebugOutput.textContent = lastImageDebug
+          ? JSON.stringify(lastImageDebug, null, 2)
+          : "No image scan debug data yet.";
+      };
+
+      const refreshDynamicText = () => {
+        runButton.textContent = modelLoading ? t("modelLoadingButton") : t("runButton");
+        if (lastSource) {
+          renderResult();
+        } else {
+          updateSpanCount(0);
+        }
+      };
+
+      const renderDemos = () => {
+        demoStrip.replaceChildren(
+          ...demos.map((demo) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "demo-button";
+            button.dataset.demoId = demo.id;
+            const titleEl = document.createElement("strong");
+            titleEl.textContent = demo.title;
+            const descEl = document.createElement("span");
+            descEl.textContent = demo.description;
+            button.replaceChildren(titleEl, descEl);
+            button.addEventListener("click", async () => {
+              inputText.value = demo.text;
+              lastSource = "";
+              lastSpans = [];
+              lastRedacted = "";
+              copyButton.disabled = true;
+              annotatedText.textContent = t("annotatedIdle");
+              redactedText.textContent = t("redactedIdle");
+              setActiveDemo(demo.id);
+              refreshDynamicText();
+              if (classifier) await runDetection();
+            });
+            return button;
+          })
+        );
+        const initialDemoId = demos.find((d) => d.locale === currentLocale)?.id ?? demos[0].id;
+        setActiveDemo(initialDemoId);
+      };
+
+      const setActiveDemo = (id) => {
+        demoStrip.querySelectorAll(".demo-button").forEach((button) => {
+          button.toggleAttribute("aria-current", button.dataset.demoId === id);
+        });
+      };
+
+      const createDemoImage = (demo) => {
+        const canvas = document.createElement("canvas");
+        const scale = window.devicePixelRatio || 1;
+        const width = 980;
+        const height = 360;
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        const ctx = canvas.getContext("2d");
+        ctx.scale(scale, scale);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = "#f6f8fb";
+        ctx.fillRect(0, 0, width, 72);
+        ctx.fillStyle = "#142033";
+        ctx.font = "700 34px Arial, sans-serif";
+        ctx.fillText(demo.title, 36, 48);
+        ctx.font = "28px Arial, sans-serif";
+        demo.lines.forEach((line, index) => {
+          ctx.fillText(line, 36, 118 + index * 58);
+        });
+
+        return canvas.toDataURL("image/png");
+      };
+
+      const drawImageCanvas = () => {
+        if (!currentImageElement) return;
+
+        const { width, height } = currentImageNaturalSize;
+        imageCanvas.width = width;
+        imageCanvas.height = height;
+        const ctx = imageCanvas.getContext("2d");
+        ctx.clearRect(0, 0, width, height);
+        ctx.drawImage(currentImageElement, 0, 0, width, height);
+        ctx.fillStyle = "#1769e0";
+
+        for (const mask of imageMasks) {
+          ctx.fillRect(mask.x, mask.y, mask.width, mask.height);
+          if (mask.id === selectedMaskId) {
+            ctx.save();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = Math.max(2, width * 0.002);
+            ctx.setLineDash([8, 5]);
+            ctx.strokeRect(mask.x, mask.y, mask.width, mask.height);
+            const handleSize = getResizeHandleVisualSize();
+            ctx.fillStyle = "#1769e0";
+            ctx.fillRect(mask.x + mask.width - handleSize / 2, mask.y + mask.height - handleSize / 2, handleSize, handleSize);
+            ctx.setLineDash([]);
+            ctx.strokeStyle = "#ffffff";
+            ctx.strokeRect(mask.x + mask.width - handleSize / 2, mask.y + mask.height - handleSize / 2, handleSize, handleSize);
+            ctx.restore();
+            ctx.fillStyle = "#1769e0";
+          }
+        }
+
+        updateImageSpanCount(imageMasks.length);
+      };
+
+      const clampMask = (mask) => {
+        const minSize = 8;
+        mask.width = Math.max(minSize, Math.min(mask.width, currentImageNaturalSize.width - mask.x));
+        mask.height = Math.max(minSize, Math.min(mask.height, currentImageNaturalSize.height - mask.y));
+        mask.x = Math.max(0, Math.min(mask.x, currentImageNaturalSize.width - mask.width));
+        mask.y = Math.max(0, Math.min(mask.y, currentImageNaturalSize.height - mask.height));
+        return mask;
+      };
+
+      const createMask = (box, source = "manual") =>
+        clampMask({
+          id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+          x: box.x,
+          y: box.y,
+          width: box.width,
+          height: box.height,
+          source
+        });
+
+      const canvasPointFromEvent = (event) => {
+        const rect = imageCanvas.getBoundingClientRect();
+        return {
+          x: ((event.clientX - rect.left) / rect.width) * currentImageNaturalSize.width,
+          y: ((event.clientY - rect.top) / rect.height) * currentImageNaturalSize.height
+        };
+      };
+
+      const getMaskAtPoint = (point) =>
+        [...imageMasks].reverse().find(
+          (mask) =>
+            point.x >= mask.x &&
+            point.x <= mask.x + mask.width &&
+            point.y >= mask.y &&
+            point.y <= mask.y + mask.height
+        );
+
+      const getResizeHandleSize = () =>
+        Math.max(22, currentImageNaturalSize.width * 0.02);
+
+      const getResizeHandleVisualSize = () =>
+        Math.max(8, currentImageNaturalSize.width * 0.006);
+
+      const isResizeHandle = (mask, point) => {
+        const handleSize = getResizeHandleSize();
+        const handleCenterX = mask.x + mask.width;
+        const handleCenterY = mask.y + mask.height;
+        return (
+          point.x >= handleCenterX - handleSize / 2 &&
+          point.x <= handleCenterX + handleSize / 2 &&
+          point.y >= handleCenterY - handleSize / 2 &&
+          point.y <= handleCenterY + handleSize / 2
+        );
+      };
+
+      const getResizeHandleAtPoint = (point) =>
+        [...imageMasks].reverse().find((mask) => isResizeHandle(mask, point));
+
+      const isInsideResizeArea = (mask, point) => {
+        const handleSize = Math.max(18, currentImageNaturalSize.width * 0.018);
+        return point.x >= mask.x + mask.width - handleSize && point.y >= mask.y + mask.height - handleSize;
+      };
+
+      const setImageSource = async (src, input, demoId = null) => {
+        if (currentImageObjectUrl) {
+          URL.revokeObjectURL(currentImageObjectUrl);
+          currentImageObjectUrl = null;
+        }
+
+        currentImageInput = input;
+        lastImageDebug = null;
+        imageMasks = [];
+        selectedMaskId = null;
+        updateImageSpanCount(0);
+        renderImageDebug();
+        imageStatus.textContent = t("imageStatusReady") ?? "Image ready. OCR will run locally in your browser.";
+
+        await new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => {
+            currentImageElement = image;
+            currentImageNaturalSize = {
+              width: image.naturalWidth || 1,
+              height: image.naturalHeight || 1
+            };
+            drawImageCanvas();
+            resolve();
+          };
+          image.onerror = reject;
+          image.src = src;
+          imageInputPreview.src = src;
+        });
+
+        imageDemoStrip.querySelectorAll(".image-demo-button").forEach((button) => {
+          button.toggleAttribute("aria-current", button.dataset.demoId === demoId);
+        });
+      };
+
+      const renderImageDemos = () => {
+        imageDemoStrip.replaceChildren(
+          ...imageDemos.map((demo) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "image-demo-button demo-button";
+            button.dataset.demoId = demo.id;
+
+            const thumb = document.createElement("img");
+            thumb.className = "image-demo-thumb";
+            thumb.alt = "";
+            thumb.loading = "lazy";
+            thumb.decoding = "async";
+            thumb.src = createDemoImage(demo);
+
+            const caption = document.createElement("div");
+            caption.className = "image-demo-caption";
+            const captionTitle = document.createElement("strong");
+            captionTitle.textContent = demo.title;
+            const captionDesc = document.createElement("span");
+            captionDesc.textContent = demo.lines[0];
+            caption.append(captionTitle, captionDesc);
+
+            button.append(thumb, caption);
+            button.addEventListener("click", async () => {
+              const src = createDemoImage(demo);
+              await setImageSource(src, src, demo.id);
+              runImageDetection();
+            });
+            return button;
+          })
+        );
+      };
+
+      const loadModel = async () => {
+        if (classifier) return classifier;
+        if (modelPromise) return modelPromise;
+
+        const device = getDevice();
+        modelLoading = true;
+        setStatus("loading", t("loadingModel"), t("loadingModelDetail", device));
+        runButton.textContent = t("modelLoadingButton");
+
+        modelPromise = pipeline("token-classification", "openai/privacy-filter", {
+            device,
+            dtype: "q4",
+            progress_callback: (progress) => {
+              if (!progress?.file) return;
+              const percent = Number.isFinite(progress.progress) ? ` ${Math.round(progress.progress)}%` : "";
+              setStatus("loading", t("downloadingModel"), `${progress.file}${percent}`);
+            }
+          })
+          .then((loadedClassifier) => {
+            classifier = loadedClassifier;
+            setStatus("ready", t("readyTitle"), t("readyDetail", device));
+            scheduleDetection(0);
+            return classifier;
+          })
+          .catch((error) => {
+            console.error(error);
+            const message = error instanceof Error ? error.message : String(error);
+            setStatus("error", t("loadError"), message);
+            throw error;
+          })
+          .finally(() => {
+            modelLoading = false;
+            modelPromise = null;
+            runButton.textContent = t("runButton");
+          });
+
+        return modelPromise;
+      };
+
+      const loadOcrWorker = async () => {
+        if (ocrWorker) return ocrWorker;
+        if (ocrPromise) return ocrPromise;
+
+        imageStatus.textContent = t("imageOcrLoading") ?? "Loading local OCR model...";
+        ocrPromise = createWorker("eng", 1, {
+          logger: (message) => {
+            if (!message?.status) return;
+            const percent = Number.isFinite(message.progress)
+              ? ` ${Math.round(message.progress * 100)}%`
+              : "";
+            imageStatus.textContent = `${t("imageOcrLoading") ?? "Loading local OCR model..."} ${message.status}${percent}`;
+          }
+        })
+          .then(async (worker) => {
+            ocrWorker = worker;
+            await ocrWorker.setParameters({
+              preserve_interword_spaces: "1"
+            });
+            return ocrWorker;
+          })
+          .finally(() => {
+            ocrPromise = null;
+          });
+
+        return ocrPromise;
+      };
+
+      const collectOcrWords = (blocks) => {
+        const words = [];
+        for (const block of blocks ?? []) {
+          for (const paragraph of block.paragraphs ?? []) {
+            for (const line of paragraph.lines ?? []) {
+              for (const word of line.words ?? []) {
+                const text = String(word.text ?? "").trim();
+                if (!text || !word.bbox) continue;
+                words.push({
+                  text,
+                  confidence: Number(word.confidence ?? 0),
+                  bbox: word.bbox
+                });
+              }
+            }
+          }
+        }
+        return words;
+      };
+
+      const buildTextFromOcrWords = (ocrWords) => {
+        let text = "";
+        const words = [];
+
+        for (const word of ocrWords) {
+          const separator = text ? " " : "";
+          const start = text.length + separator.length;
+          text += separator + word.text;
+          words.push({
+            ...word,
+            start,
+            end: start + word.text.length
+          });
+        }
+
+        return { text, words };
+      };
+
+      const median = (values) => {
+        if (!values.length) return 0;
+        const sorted = [...values].sort((a, b) => a - b);
+        const middle = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+      };
+
+      const getWordCenterY = (word) => (word.bbox.y0 + word.bbox.y1) / 2;
+
+      const getPrimaryLineWords = (words) => {
+        if (words.length <= 2) return words;
+
+        const heights = words.map((word) => word.bbox.y1 - word.bbox.y0).filter((height) => height > 0);
+        const medianHeight = median(heights) || 1;
+        const buckets = [];
+
+        for (const word of words) {
+          const centerY = getWordCenterY(word);
+          const bucket = buckets.find((item) => Math.abs(item.centerY - centerY) <= medianHeight * 0.9);
+          if (bucket) {
+            bucket.words.push(word);
+            bucket.centerY = median(bucket.words.map(getWordCenterY));
+          } else {
+            buckets.push({ centerY, words: [word] });
+          }
+        }
+
+        return buckets.sort((a, b) => b.words.length - a.words.length)[0]?.words ?? words;
+      };
+
+      const mergeWordBoxes = (words) =>
+        words.reduce(
+          (box, word) => ({
+            x0: Math.min(box.x0, word.bbox.x0),
+            y0: Math.min(box.y0, word.bbox.y0),
+            x1: Math.max(box.x1, word.bbox.x1),
+            y1: Math.max(box.y1, word.bbox.y1)
+          }),
+          { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity }
+        );
+
+      const renderImageOverlays = (text, spans, words) => {
+        imageMasks = [];
+        selectedMaskId = null;
+        const imageWidth = currentImageNaturalSize.width || 1;
+        const imageHeight = currentImageNaturalSize.height || 1;
+        const maxReasonableWordHeight = imageHeight * 0.18;
+        const maxReasonableWordWidth = imageWidth * 0.8;
+
+        for (const span of spans) {
+          const matchedWords = words.filter((word) => {
+            const wordWidth = word.bbox.x1 - word.bbox.x0;
+            const wordHeight = word.bbox.y1 - word.bbox.y0;
+            return (
+              word.end > span.start &&
+              word.start < span.end &&
+              wordWidth > 2 &&
+              wordHeight > 2 &&
+              wordWidth < maxReasonableWordWidth &&
+              wordHeight < maxReasonableWordHeight
+            );
+          });
+          if (!matchedWords.length) continue;
+
+          const lineWords = getPrimaryLineWords(matchedWords);
+          const box = mergeWordBoxes(lineWords);
+          const top = Math.max(0, box.y0 - 5);
+          const bottom = Math.min(imageHeight, box.y1 + 5);
+          imageMasks.push(
+            createMask(
+              {
+                x: box.x0,
+                y: top,
+                width: box.x1 - box.x0,
+                height: Math.max(2, bottom - top)
+              },
+              span.label
+            )
+          );
+        }
+        drawImageCanvas();
+      };
+
+      const getImageSpanMatches = (spans, words) => {
+        const imageWidth = currentImageNaturalSize.width || 1;
+        const imageHeight = currentImageNaturalSize.height || 1;
+        const maxReasonableWordHeight = imageHeight * 0.18;
+        const maxReasonableWordWidth = imageWidth * 0.8;
+
+        return spans.map((span) => {
+          const rawMatchedWords = words.filter((word) => word.end > span.start && word.start < span.end);
+          const matchedWords = rawMatchedWords.filter((word) => {
+            const wordWidth = word.bbox.x1 - word.bbox.x0;
+            const wordHeight = word.bbox.y1 - word.bbox.y0;
+            return wordWidth > 2 && wordHeight > 2 && wordWidth < maxReasonableWordWidth && wordHeight < maxReasonableWordHeight;
+          });
+          const lineWords = getPrimaryLineWords(matchedWords);
+
+          return {
+            span: {
+              label: span.label,
+              score: Number(span.score.toFixed(4)),
+              text: span.text,
+              start: span.start,
+              end: span.end
+            },
+            rawMatchedWords: rawMatchedWords.map((word) => ({
+              text: word.text,
+              confidence: Number(word.confidence.toFixed?.(2) ?? word.confidence),
+              start: word.start,
+              end: word.end,
+              bbox: word.bbox
+            })),
+            renderedWords: lineWords.map((word) => ({
+              text: word.text,
+              confidence: Number(word.confidence.toFixed?.(2) ?? word.confidence),
+              start: word.start,
+              end: word.end,
+              bbox: word.bbox
+            })),
+            renderedBox: lineWords.length ? mergeWordBoxes(lineWords) : null
+          };
+        });
+      };
+
+      const runImageDetection = async () => {
+        if (!currentImageInput) {
+          imageStatus.textContent = t("imageStatusIdle") ?? "Choose a demo image or upload your own image.";
+          return;
+        }
+
+        runImageButton.disabled = true;
+        updateImageSpanCount(0);
+        imageMasks = [];
+        selectedMaskId = null;
+        drawImageCanvas();
+
+        try {
+          imageStatus.textContent = t("imageDetecting") ?? "Running OCR and privacy detection...";
+          await loadModel();
+          const worker = await loadOcrWorker();
+          const { data } = await worker.recognize(currentImageInput, {}, { blocks: true, text: true });
+          const ocrWords = collectOcrWords(data.blocks);
+          const { text, words } = buildTextFromOcrWords(ocrWords);
+
+          if (!text.trim()) {
+            imageStatus.textContent = t("imageNoText") ?? "No text was detected in the image.";
+            return;
+          }
+
+          const raw = await classifier(text, { aggregation_strategy: "simple" });
+          let searchFrom = 0;
+          const spans = raw
+            .map((span) => {
+              const normalized = normalizeSpan(span, text, searchFrom);
+              if (normalized.end > searchFrom) searchFrom = normalized.end;
+              return normalized;
+            })
+            .filter((span) => span.text);
+
+          renderImageOverlays(text, spans, words);
+          lastImageDebug = {
+            image: currentImageNaturalSize,
+            ocrText: data.text,
+            reconstructedText: text,
+            ocrWords: words.map((word) => ({
+              text: word.text,
+              confidence: Number(word.confidence.toFixed?.(2) ?? word.confidence),
+              start: word.start,
+              end: word.end,
+              bbox: word.bbox,
+              size: {
+                width: word.bbox.x1 - word.bbox.x0,
+                height: word.bbox.y1 - word.bbox.y0
+              }
+            })),
+            privacySpans: spans.map((span) => ({
+              label: span.label,
+              score: Number(span.score.toFixed(4)),
+              text: span.text,
+              start: span.start,
+              end: span.end
+            })),
+            spanMatches: getImageSpanMatches(spans, words)
+          };
+          renderImageDebug();
+          imageStatus.textContent = "";
+        } catch (error) {
+          console.error(error);
+          const message = error instanceof Error ? error.message : String(error);
+          imageStatus.textContent = `${t("imageError") ?? "Image scan failed."} ${message}`;
+        } finally {
+          runImageButton.disabled = false;
+        }
+      };
+
+      const addManualMask = () => {
+        if (!currentImageElement) return;
+        const width = Math.max(80, currentImageNaturalSize.width * 0.22);
+        const height = Math.max(28, currentImageNaturalSize.height * 0.08);
+        const mask = createMask(
+          {
+            x: (currentImageNaturalSize.width - width) / 2,
+            y: (currentImageNaturalSize.height - height) / 2,
+            width,
+            height
+          },
+          "manual"
+        );
+        imageMasks.push(mask);
+        selectedMaskId = mask.id;
+        drawImageCanvas();
+      };
+
+      const downloadMaskedImage = () => {
+        if (!currentImageElement) return;
+        const previousSelection = selectedMaskId;
+        selectedMaskId = null;
+        drawImageCanvas();
+        const link = document.createElement("a");
+        link.href = imageCanvas.toDataURL("image/png");
+        link.download = "privacy-filter-masked.png";
+        link.click();
+        selectedMaskId = previousSelection;
+        drawImageCanvas();
+      };
+
+      const deleteMaskAtPoint = (event) => {
+        if (!currentImageElement) return;
+        const mask = getMaskAtPoint(canvasPointFromEvent(event));
+        if (!mask) return;
+        imageMasks = imageMasks.filter((item) => item.id !== mask.id);
+        selectedMaskId = null;
+        maskDragState = null;
+        drawImageCanvas();
+      };
+
+      const deleteSelectedMask = () => {
+        if (selectedMaskId === null) return;
+        imageMasks = imageMasks.filter((item) => item.id !== selectedMaskId);
+        selectedMaskId = null;
+        maskDragState = null;
+        drawImageCanvas();
+      };
+
+      const handleMaskDeleteKey = (event) => {
+        if (event.key !== "Delete" && event.key !== "Backspace") return;
+        const activeElement = document.activeElement;
+        const isTyping =
+          activeElement instanceof HTMLInputElement ||
+          activeElement instanceof HTMLTextAreaElement ||
+          activeElement?.isContentEditable;
+        if (isTyping || selectedMaskId === null) return;
+
+        event.preventDefault();
+        deleteSelectedMask();
+      };
+
+      const handleCanvasPointerDown = (event) => {
+        if (!currentImageElement) return;
+        const point = canvasPointFromEvent(event);
+        const resizeMask = getResizeHandleAtPoint(point);
+        const mask = resizeMask ?? getMaskAtPoint(point);
+
+        if (!mask) {
+          selectedMaskId = null;
+          maskDragState = null;
+          drawImageCanvas();
+          return;
+        }
+
+        selectedMaskId = mask.id;
+        maskDragState = {
+          mode: resizeMask || isInsideResizeArea(mask, point) ? "resize" : "move",
+          maskId: mask.id,
+          startPoint: point,
+          startMask: { ...mask }
+        };
+        imageCanvas.setPointerCapture(event.pointerId);
+        drawImageCanvas();
+      };
+
+      const handleCanvasPointerMove = (event) => {
+        const point = canvasPointFromEvent(event);
+        if (!maskDragState) {
+          const resizeMask = getResizeHandleAtPoint(point);
+          const mask = resizeMask ?? getMaskAtPoint(point);
+          imageCanvas.style.cursor = resizeMask
+            ? "nwse-resize"
+            : mask
+              ? "move"
+              : "crosshair";
+          return;
+        }
+
+        const mask = imageMasks.find((item) => item.id === maskDragState.maskId);
+        if (!mask) return;
+        imageCanvas.style.cursor = maskDragState.mode === "resize" ? "nwse-resize" : "move";
+
+        const dx = point.x - maskDragState.startPoint.x;
+        const dy = point.y - maskDragState.startPoint.y;
+
+        if (maskDragState.mode === "move") {
+          mask.x = maskDragState.startMask.x + dx;
+          mask.y = maskDragState.startMask.y + dy;
+        } else {
+          mask.width = maskDragState.startMask.width + dx;
+          mask.height = maskDragState.startMask.height + dy;
+        }
+
+        clampMask(mask);
+        drawImageCanvas();
+      };
+
+      const handleCanvasPointerUp = (event) => {
+        if (!maskDragState) return;
+        maskDragState = null;
+        try {
+          imageCanvas.releasePointerCapture(event.pointerId);
+        } catch {}
+      };
+
+      const resetCanvasCursor = () => {
+        if (!maskDragState) imageCanvas.style.cursor = "crosshair";
+      };
+
+      const normalizeSpan = (span, source, searchFrom) => {
+        const label = span.entity_group || span.entity || "unknown";
+        const cleanWord = String(span.word || "").replace(/^##/, "").trim();
+        let start = Number.isInteger(span.start) ? span.start : -1;
+        let end = Number.isInteger(span.end) ? span.end : -1;
+
+        if ((start < 0 || end < 0) && cleanWord) {
+          const found = source.indexOf(cleanWord, searchFrom);
+          if (found >= 0) {
+            start = found;
+            end = found + cleanWord.length;
+          }
+        }
+
+        return {
+          label,
+          score: typeof span.score === "number" ? span.score : 0,
+          text: start >= 0 && end > start ? source.slice(start, end) : cleanWord,
+          start,
+          end
+        };
+      };
+
+      const redact = (source, spans) => {
+        const usable = spans
+          .filter((span) => span.start >= 0 && span.end > span.start)
+          .sort((a, b) => a.start - b.start || b.end - a.end);
+
+        let cursor = 0;
+        let output = "";
+
+        for (const span of usable) {
+          if (span.start < cursor) continue;
+          output += source.slice(cursor, span.start);
+          output += `[${labelFor(span.label)}]`;
+          cursor = span.end;
+        }
+
+        return output + source.slice(cursor);
+      };
+
+      const getUsableSpans = (spans) =>
+        spans
+          .filter((span) => span.start >= 0 && span.end > span.start)
+          .sort((a, b) => a.start - b.start || b.end - a.end);
+
+      const renderAnnotatedResult = () => {
+        annotatedText.replaceChildren();
+
+        if (!lastSource) {
+          annotatedText.textContent = t("annotatedIdle");
+          return;
+        }
+
+        const usable = getUsableSpans(lastSpans);
+        if (!usable.length) {
+          annotatedText.textContent = lastSource;
+          return;
+        }
+
+        let cursor = 0;
+        for (const span of usable) {
+          if (span.start < cursor) continue;
+
+          if (span.start > cursor) {
+            annotatedText.append(document.createTextNode(lastSource.slice(cursor, span.start)));
+          }
+
+          const chip = document.createElement("span");
+          chip.className = `entity-chip entity-chip--${labelColors[span.label] || "default"}`;
+          chip.title = `${rawLabelFor(span.label)} · ${labelFor(span.label)} · ${(span.score * 100).toFixed(2)}%`;
+
+          const value = document.createElement("span");
+          value.className = "entity-value";
+          value.textContent = lastSource.slice(span.start, span.end);
+
+          const label = document.createElement("span");
+          label.className = "entity-label";
+          label.textContent = rawLabelFor(span.label);
+
+          chip.append(value, label);
+          annotatedText.append(chip);
+          cursor = span.end;
+        }
+
+        if (cursor < lastSource.length) {
+          annotatedText.append(document.createTextNode(lastSource.slice(cursor)));
+        }
+      };
+
+      const renderResult = () => {
+        lastRedacted = redact(lastSource, lastSpans);
+        renderAnnotatedResult();
+        redactedText.textContent = lastRedacted || t("redactedIdle");
+        updateSpanCount(lastSpans.length);
+        copyButton.disabled = !lastRedacted;
+      };
+
+      const runDetection = async () => {
+        if (!classifier) {
+          runButton.textContent = t("modelLoadingButton");
+          try {
+            await loadModel();
+          } catch {
+            runButton.textContent = t("runButton");
+            return;
+          }
+        }
+        if (!classifier) return;
+
+        const source = inputText.value.trim();
+        if (!source) {
+          lastSource = "";
+          lastSpans = [];
+          lastRedacted = "";
+          annotatedText.textContent = t("annotatedIdle");
+          redactedText.textContent = t("emptyInput");
+          updateSpanCount(0);
+          return;
+        }
+
+        runButton.disabled = true;
+        copyButton.disabled = true;
+        setStatus("loading", t("detecting"), t("detectingDetail"));
+
+        try {
+          const raw = await classifier(source, { aggregation_strategy: "simple" });
+          let searchFrom = 0;
+          const spans = raw
+            .map((span) => {
+              const normalized = normalizeSpan(span, source, searchFrom);
+              if (normalized.end > searchFrom) searchFrom = normalized.end;
+              return normalized;
+            })
+            .filter((span) => span.text);
+
+          lastSource = source;
+          lastSpans = spans;
+          renderResult();
+          setStatus("ready", t("doneTitle"), t("doneDetail", spans.length));
+        } catch (error) {
+          console.error(error);
+          const message = error instanceof Error ? error.message : String(error);
+          setStatus("error", t("detectError"), message);
+        } finally {
+          runButton.disabled = false;
+          if (pendingDetection) {
+            pendingDetection = false;
+            scheduleDetection(120);
+          }
+        }
+      };
+
+      const scheduleDetection = (delay = 450) => {
+        window.clearTimeout(detectTimer);
+        if (!inputText.value.trim()) return;
+
+        detectTimer = window.setTimeout(() => {
+          if (runButton.disabled) {
+            pendingDetection = true;
+            return;
+          }
+          runDetection();
+        }, delay);
+      };
+
+      inputText.addEventListener("input", () => {
+        lastSource = "";
+        lastSpans = [];
+        lastRedacted = "";
+        copyButton.disabled = true;
+        annotatedText.textContent = t("annotatedIdle");
+        redactedText.textContent = t("redactedIdle");
+        updateSpanCount(0);
+        scheduleDetection();
+      });
+      runButton.addEventListener("click", runDetection);
+      imageDebugToggle.addEventListener("change", renderImageDebug);
+      runImageButton.addEventListener("click", runImageDetection);
+      addMaskButton.addEventListener("click", addManualMask);
+      downloadImageButton.addEventListener("click", downloadMaskedImage);
+      imageCanvas.addEventListener("pointerdown", handleCanvasPointerDown);
+      imageCanvas.addEventListener("pointermove", handleCanvasPointerMove);
+      imageCanvas.addEventListener("pointerup", handleCanvasPointerUp);
+      imageCanvas.addEventListener("pointercancel", handleCanvasPointerUp);
+      imageCanvas.addEventListener("pointerleave", resetCanvasCursor);
+      imageCanvas.addEventListener("dblclick", deleteMaskAtPoint);
+      window.addEventListener("keydown", handleMaskDeleteKey);
+      imageUpload.addEventListener("change", async () => {
+        const file = imageUpload.files?.[0];
+        if (!file) return;
+
+        const objectUrl = URL.createObjectURL(file);
+        await setImageSource(objectUrl, file);
+        currentImageObjectUrl = objectUrl;
+        runImageDetection();
+      });
+      copyButton.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(lastRedacted);
+        setStatus("ready", t("copiedTitle"), t("copiedDetail"));
+      });
+      renderDemos();
+      renderImageDemos();
+      refreshDynamicText();
+
+      const initialImageDemo = imageDemos[0];
+      const initialImageSrc = createDemoImage(initialImageDemo);
+      const initialImageReady = setImageSource(initialImageSrc, initialImageSrc, initialImageDemo.id);
+      loadModel()
+        .then(async () => {
+          await initialImageReady;
+          if (currentImageInput) runImageDetection();
+        })
+        .catch(() => {});
+    </script>
+  </body>
+</html>

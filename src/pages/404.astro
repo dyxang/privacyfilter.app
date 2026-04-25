@@ -1,0 +1,54 @@
+---
+import "../styles/global.css";
+
+const pageTitle = "404 · Page not found · Privacy Filter";
+const description = "The requested page could not be found.";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex,follow" />
+    <meta name="theme-color" content="#1769e0" />
+    <meta name="color-scheme" content="light" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231769e0'/%3E%3Cpath d='M50 22 28 32v18c0 14 9 22 22 28 13-6 22-14 22-28V32L50 22zm0 14 14 6v8c0 9-6 14-14 18-8-4-14-9-14-18v-8l14-6z' fill='%23fff'/%3E%3C/svg%3E"
+    />
+  </head>
+  <body class="min-h-screen m-0">
+    <main class="min-h-screen grid place-items-center px-5 py-12">
+      <section class="w-full max-w-[640px] border border-line bg-panel p-8 text-center">
+        <a
+          href="/"
+          aria-label="Privacy Filter home"
+          class="inline-flex items-center gap-2 no-underline text-text mb-6"
+        >
+          <span
+            aria-hidden="true"
+            class="inline-grid place-items-center w-[30px] h-[30px] bg-accent text-white text-xs font-extrabold tracking-wider"
+            >PF</span
+          >
+          <strong class="font-extrabold tracking-tight text-base">Privacy Filter</strong>
+        </a>
+        <p class="m-0 text-sm font-extrabold tracking-[0.18em] uppercase text-accent">404</p>
+        <h1 class="mt-3 mb-3 text-3xl md:text-4xl font-extrabold tracking-tight">
+          Page not found
+        </h1>
+        <p class="mx-auto mt-0 mb-6 max-w-[460px] text-muted leading-[1.7]">
+          The page you requested does not exist. Return to Privacy Filter to run local text and image redaction.
+        </p>
+        <a
+          href="/"
+          class="inline-flex min-h-[40px] items-center justify-center px-4 border border-accent bg-accent text-white font-bold no-underline hover:bg-accent-dark transition-colors"
+          >Back home</a
+        >
+      </section>
+    </main>
+  </body>
+</html>
