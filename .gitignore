@@ -39,3 +39,6 @@ build/
 
 # Testing
 coverage/
+
+# Generated video renders
+videos/privacyfilter-promo/renders/

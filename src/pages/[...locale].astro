@@ -688,6 +688,18 @@ const repoContribUrl = `${repoUrl}/blob/main/CONTRIBUTING.md`;
       env.useWasmCache = true;
       env.cacheKey = "privacy-filter-model-v1";
 
+      const isMobileLikeDevice = () => {
+        const coarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
+        const mobileUserAgent = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        const deviceMemory = Number(navigator.deviceMemory ?? 8);
+        return coarsePointer || mobileUserAgent || deviceMemory <= 4;
+      };
+
+      const mobileLikeDevice = isMobileLikeDevice();
+      if (env.backends?.onnx?.wasm) {
+        env.backends.onnx.wasm.numThreads = mobileLikeDevice ? 1 : Math.min(navigator.hardwareConcurrency || 4, 4);
+      }
+
       const inputText = document.querySelector("#inputText");
       const runButton = document.querySelector("#runButton");
       const copyButton = document.querySelector("#copyButton");
@@ -744,6 +756,7 @@ const repoContribUrl = `${repoUrl}/blob/main/CONTRIBUTING.md`;
       };
 
       const getDevice = () => {
+        if (mobileLikeDevice) return "wasm";
         return "gpu" in navigator ? "webgpu" : "wasm";
       };
 
@@ -1686,7 +1699,7 @@ const repoContribUrl = `${repoUrl}/blob/main/CONTRIBUTING.md`;
       loadModel()
         .then(async () => {
           await initialImageReady;
-          if (currentImageInput) runImageDetection();
+          if (currentImageInput && !mobileLikeDevice) runImageDetection();
         })
         .catch(() => {});
     </script>
