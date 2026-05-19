@@ -1,9 +1,10 @@
-export interface RegexSpan {
+export interface Span {
   label: string;
   text: string;
   start: number;
   end: number;
   source: string;
+  score?: number;
 }
 
 interface PatternDef {
@@ -36,17 +37,17 @@ const PATTERNS: PatternDef[] = [
   {
     label: "secret",
     source: "ipv6",
-    re: /\b(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,7}:|\b(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}\b|\b[0-9A-Fa-f]{1,4}:(?::[0-9A-Fa-f]{1,4}){1,6}\b|\b:(?::[0-9A-Fa-f]{1,4}){1,7}\b|\b::(?:[0-9A-Fa-f]{1,4}:){0,5}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b[0-9A-Fa-f]{1,4}::(?:[0-9A-Fa-f]{1,4}:){0,4}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,5}::(?:[0-9A-Fa-f]{1,4}:){0,3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,4}::(?:[0-9A-Fa-f]{1,4}:){0,2}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,3}::(?:[0-9A-Fa-f]{1,4}:){0,1}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,2}::(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b[0-9A-Fa-f]{1,4}::(?:[0-9A-Fa-f]{1,4}:){0,1}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b::(?:[0-9A-Fa-f]{1,4}:){0,2}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b/gi
+    re: /\b(?:[0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,7}:|\b(?:[0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,5}(?::[0-9A-Fa-f]{1,4}){1,2}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,4}(?::[0-9A-Fa-f]{1,4}){1,3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,3}(?::[0-9A-Fa-f]{1,4}){1,4}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,2}(?::[0-9A-Fa-f]{1,4}){1,5}\b|\b[0-9A-Fa-f]{1,4}:(?::[0-9A-Fa-f]{1,4}){1,6}\b|\b:(?::[0-9A-Fa-f]{1,4}){1,7}\b|\b::(?:[0-9A-Fa-f]{1,4}:){0,5}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b[0-9A-Fa-f]{1,4}::(?:[0-9A-Fa-f]{1,4}:){0,4}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,5}::(?:[0-9A-Fa-f]{1,4}:){0,3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,4}::(?:[0-9A-Fa-f]{1,4}:){0,2}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,3}::(?:[0-9A-Fa-f]{1,4}:){0,1}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b(?:[0-9A-Fa-f]{1,4}:){1,2}::(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b[0-9A-Fa-f]{1,4}::(?:[0-9A-Fa-f]{1,4}:){0,1}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b|\b::(?:[0-9A-Fa-f]{1,4}:){0,2}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}\b/g
   },
   {
     label: "secret",
     source: "jwt",
-    re: /\beyJh[A-Za-z0-9_-]{10,}\.eyJh[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g
+    re: /\beyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g
   },
   {
     label: "secret",
     source: "api_key",
-    re: /\b(?:sk-[A-Za-z0-9]{20,}|sk-live-[A-Za-z0-9]{20,}|sk-proj-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|gho_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|glpat-[A-Za-z0-9\-]{20,}|xox[bpors]-[A-Za-z0-9\-]{10,}|AKIA[0-9A-Z]{16}|AIza[A-Za-z0-9_\-]{35}|key-[A-Za-z0-9]{20,}|Bearer\s+[A-Za-z0-9\-._~+/]+=*)\b/g
+    re: /\b(?:sk-[A-Za-z0-9]{20,}|sk-live-[A-Za-z0-9]{20,}|sk-proj-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36}|gho_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{22,}|glpat-[A-Za-z0-9\-]{20,}|xox[bpors]-[A-Za-z0-9\-]{10,}|AKIA[0-9A-Z]{16}|AIza[A-Za-z0-9_\-]{35}|key-[A-Za-z0-9]{20,}|Bearer\s+[A-Za-z0-9\-._~+/]{20,512}=*)\b/g
   },
   {
     label: "secret",
@@ -57,18 +58,32 @@ const PATTERNS: PatternDef[] = [
     label: "secret",
     source: "eth_wallet",
     re: /\b0x[0-9A-Fa-f]{40}\b/g
-  },
-  {
-    label: "secret",
-    source: "sol_wallet",
-    re: /\b[1-9A-HJ-NP-Za-km-z]{32,44}\b/g
   }
 ];
 
-const IPV4_IN_IPV6_PATTERN = /(?:^|:)(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}(?:$|:)/;
+const BTC_BASE58_CHARS = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-export function regexScan(text: string): RegexSpan[] {
-  const spans: RegexSpan[] = [];
+function validateBase58Check(input: string): boolean {
+  for (const ch of input) {
+    if (!BTC_BASE58_CHARS.includes(ch)) return false;
+  }
+  return input.length >= 25 && input.length <= 34;
+}
+
+function validateBtcAddress(text: string): boolean {
+  if (/^1[0]{25,34}$/.test(text)) return false;
+  if (text.startsWith("bc1")) return true;
+  return validateBase58Check(text);
+}
+
+function validateEthAddress(text: string): boolean {
+  if (/^0x[0-9a-f]{1,6}$/i.test(text)) return false;
+  if (/^0x0{40}$/i.test(text)) return false;
+  return true;
+}
+
+export function regexScan(text: string): Span[] {
+  const spans: Span[] = [];
 
   for (const pattern of PATTERNS) {
     pattern.re.lastIndex = 0;
@@ -77,22 +92,12 @@ export function regexScan(text: string): RegexSpan[] {
     while ((match = pattern.re.exec(text)) !== null) {
       const matchedText = match[0];
 
-      if (pattern.source === "ipv6" && IPV4_IN_IPV6_PATTERN.test(matchedText) === false) {
-        const looksLikeIpv4 = /^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)$/.test(matchedText);
-        if (looksLikeIpv4) continue;
-      }
-
       if (pattern.source === "eth_wallet") {
-        if (/^0x[0-9a-f]{1,6}$/i.test(matchedText)) continue;
-        if (/^0x0{40}$/i.test(matchedText)) continue;
-      }
-
-      if (pattern.source === "sol_wallet") {
-        if (matchedText.length < 32) continue;
+        if (!validateEthAddress(matchedText)) continue;
       }
 
       if (pattern.source === "btc_wallet") {
-        if (/^1[0]{25,34}$/.test(matchedText)) continue;
+        if (!validateBtcAddress(matchedText)) continue;
       }
 
       spans.push({
@@ -108,14 +113,11 @@ export function regexScan(text: string): RegexSpan[] {
   return spans;
 }
 
-export function mergeSpans(
-  modelSpans: RegexSpan[],
-  regexSpans: RegexSpan[]
-): RegexSpan[] {
-  const all = [...modelSpans, ...regexSpans];
+export function mergeSpans(existingSpans: Span[], newSpans: Span[], sourceText?: string): Span[] {
+  const all = [...existingSpans, ...newSpans];
   all.sort((a, b) => a.start - b.start || b.end - a.end);
 
-  const merged: RegexSpan[] = [];
+  const merged: Span[] = [];
   let cursor = -1;
 
   for (const span of all) {
@@ -124,12 +126,16 @@ export function mergeSpans(
       cursor = span.end;
     } else if (span.end > cursor) {
       const overlapRatio = (cursor - span.start) / (span.end - span.start);
-      if (overlapRatio < 0.5) {
-        merged.push({
-          ...span,
-          start: cursor,
-          text: span.text.slice(cursor - span.start)
-        });
+      if (overlapRatio <= 0.5) {
+        const prior = merged[merged.length - 1];
+        if (prior) {
+          prior.end = span.end;
+          if (sourceText) {
+            prior.text = sourceText.slice(prior.start, span.end);
+          } else {
+            prior.text = prior.text + span.text.slice(cursor - span.start);
+          }
+        }
         cursor = span.end;
       }
     }
@@ -147,6 +153,5 @@ export const PATTERN_DESCRIPTIONS: Record<string, string> = {
   jwt: "JSON Web Token",
   api_key: "API Key / Token",
   btc_wallet: "Bitcoin Wallet Address",
-  eth_wallet: "Ethereum Wallet Address",
-  sol_wallet: "Solana Wallet Address"
+  eth_wallet: "Ethereum Wallet Address"
 };
